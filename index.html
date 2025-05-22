@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Math Rush 🔢</title>
+    <style>
+      body {
+        background: #0d1117;
+        color: #e6edf3;
+        font-family: "Courier New", monospace;
+        text-align: center;
+        padding: 40px;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+      }
+      #question {
+        font-size: 2rem;
+        margin: 20px;
+      }
+      input {
+        padding: 10px;
+        font-size: 1.2rem;
+        width: 100px;
+        text-align: center;
+        border-radius: 6px;
+        border: none;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 1rem;
+        background: #238636;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      #score,
+      #timer {
+        font-size: 1.2rem;
+        margin: 10px;
+      }
+      #gameOver {
+        color: #f85149;
+        font-size: 1.5rem;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Math Rush ⚡</h1>
+    <div id="score">Điểm: 0</div>
+    <div id="timer">Thời gian còn lại: 5</div>
+    <div id="question">0 + 0 = ?</div>
+    <input type="number" id="answer" placeholder="?" autofocus />
+    <br />
+    <button onclick="startGame()">Bắt đầu</button>
+    <div id="gameOver"></div>
+
+    <script>
+      let score = 0;
+      let time = 5;
+      let correctAnswer = 0;
+      let countdown;
+      let currentQuestion;
+      const scoreEl = document.getElementById("score");
+      const timerEl = document.getElementById("timer");
+      const questionEl = document.getElementById("question");
+      const answerInput = document.getElementById("answer");
+      const gameOverEl = document.getElementById("gameOver");
+
+      function generateQuestion() {
+        const num1 = Math.floor(Math.random() * 90) + 10; // 10–99
+        const num2 = Math.floor(Math.random() * 90) + 10;
+        const ops = ["+", "-", "×"];
+        const op = ops[Math.floor(Math.random() * ops.length)];
+
+        if (op === "+") correctAnswer = num1 + num2;
+        if (op === "-") correctAnswer = num1 - num2;
+        if (op === "×") correctAnswer = num1 * num2;
+
+        currentQuestion = `${num1} ${op} ${num2} = ?`;
+        questionEl.textContent = currentQuestion;
+      }
+
+      function startGame() {
+        score = 0;
+        time = 5;
+        gameOverEl.textContent = "";
+        scoreEl.textContent = "Điểm: " + score;
+        answerInput.value = "";
+        answerInput.focus();
+        generateQuestion();
+        timerEl.textContent = "Thời gian còn lại: " + time;
+
+        clearInterval(countdown);
+        countdown = setInterval(() => {
+          time--;
+          timerEl.textContent = "Thời gian còn lại: " + time;
+          if (time <= 0) endGame();
+        }, 1000);
+      }
+
+      answerInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          const userAnswer = parseInt(answerInput.value);
+          if (userAnswer === correctAnswer) {
+            score++;
+            scoreEl.textContent = "Điểm: " + score;
+            answerInput.value = "";
+            time = 5;
+            timerEl.textContent = "Thời gian còn lại: " + time;
+            generateQuestion();
+          } else {
+            endGame();
+          }
+        }
+      });
+
+      function endGame() {
+        clearInterval(countdown);
+        gameOverEl.innerHTML = `💀 Hết game! Bạn được <strong>${score}</strong> điểm`;
+      }
+    </script>
+  </body>
+</html>
